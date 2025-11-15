@@ -47,7 +47,7 @@ const Index = () => {
               <TrendingUp className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">BizSolutions Advisor</h1>
+              <h1 className="text-2xl font-bold text-foreground">Synkrone.in</h1>
               <p className="text-sm text-muted-foreground">Strategic Consulting & BPA for SMEs</p>
             </div>
           </div>
@@ -240,7 +240,7 @@ const Index = () => {
 
       <footer className="mt-16 border-t bg-card/50 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2025 BizSolutions Advisor. Professional consulting for growing businesses.</p>
+          <p>© 2025 Synkrone.in. Professional consulting for growing businesses.</p>
         </div>
       </footer>
     </div>
