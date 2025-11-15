@@ -23,8 +23,8 @@ const Index = () => {
     // Simulate processing time
     setTimeout(() => {
       setRecommendation({
-        strategic: `For a ${companySize}-sized ${industry} business facing this challenge, consider implementing a phased transformation approach: Start by conducting a comprehensive operational audit to identify efficiency gaps, then prioritize initiatives based on ROI potential. Focus on quick wins that demonstrate value while building toward larger structural improvements. This approach minimizes risk while maintaining momentum.`,
-        bpa: `Automate your ${problem.toLowerCase().includes('customer') ? 'customer service workflow' : problem.toLowerCase().includes('inventory') ? 'inventory management system' : problem.toLowerCase().includes('finance') || problem.toLowerCase().includes('invoice') ? 'financial processes' : 'core operational processes'} using workflow automation tools. Implement: 1) Digital intake forms to eliminate manual data entry, 2) Rule-based routing for efficient task distribution, 3) Automated notifications and follow-ups, 4) Real-time dashboards for monitoring. Expected ROI: 40-60% time savings within 6 months.`
+        strategic: `Expand into predictive analytics for demand forecasting. Enable clients to anticipate stock needs 30-60 days ahead using AI-powered trend analysis. This differentiates Synkron from basic sync tools and justifies premium pricing while reducing client stockouts by 40%.`,
+        bpa: `Automate customer onboarding with intelligent integration wizards. Implement: 1) Auto-detect marketplace APIs and pre-configure sync rules, 2) Self-service setup workflows with guided steps, 3) Automated health checks post-integration. Expected impact: 70% reduction in setup time, 50% decrease in support tickets.`
       });
       setLoading(false);
     }, 1500);
