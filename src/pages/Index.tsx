@@ -4,8 +4,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lightbulb, TrendingUp, Zap } from "lucide-react";
+import { Lightbulb, TrendingUp, Zap, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Index = () => {
   const [businessContext, setBusinessContext] = useState("");
@@ -17,6 +19,7 @@ const Index = () => {
     bpa: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,6 +47,10 @@ const Index = () => {
 
   const generateRecommendation = async () => {
     setLoading(true);
+    setError(null);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
     
     try {
       const response = await fetch('https://dsm-n8n-642200156.kloudbeansite.com/webhook/3cdc60ec-1df3-4aa3-aca8-6dddea2ac534/chat', {
@@ -57,22 +64,45 @@ const Index = () => {
           businessContext,
           problem
         }),
+        signal: controller.signal
       });
 
-      if (!response.ok) throw new Error('Failed to get recommendations');
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error('server');
+      }
 
       const data = await response.json();
+      
+      if (!data.strategic || !data.bpa) {
+        throw new Error('invalid');
+      }
+      
       setRecommendation({
-        strategic: data.strategic || 'Unable to generate strategic recommendation at this time.',
-        bpa: data.bpa || 'Unable to generate BPA recommendation at this time.'
+        strategic: data.strategic,
+        bpa: data.bpa
       });
-    } catch (error) {
+      setError(null);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      let errorMessage = "Unable to connect to the recommendation service. Please check your internet connection.";
+      
+      if (err.name === 'AbortError') {
+        errorMessage = "Request timed out. The service might be busy. Please try again.";
+      } else if (err.message === 'server') {
+        errorMessage = "The recommendation service is temporarily unavailable. Please try again in a few moments.";
+      } else if (err.message === 'invalid') {
+        errorMessage = "Received incomplete recommendations. Please try submitting again.";
+      }
+      
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to generate recommendations. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
-      console.error('Error generating recommendations:', error);
+      console.error('Error generating recommendations:', err);
     } finally {
       setLoading(false);
     }
@@ -187,7 +217,53 @@ const Index = () => {
 
           {/* Results Display */}
           <div className="space-y-6">
-            {recommendation ? (
+            {loading ? (
+              <>
+                {/* Loading Skeleton */}
+                <Card className="border-primary/20 bg-primary/5 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-5 rounded" />
+                      <Skeleton className="h-6 w-48" />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+
+                <Card className="border-primary/20 bg-primary/5 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-5 rounded" />
+                      <Skeleton className="h-6 w-48" />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              </>
+            ) : error ? (
+              <Alert variant="destructive" className="shadow-lg">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Failed to Generate Recommendations</AlertTitle>
+                <AlertDescription className="mt-2">
+                  <p className="mb-4">{error}</p>
+                  <Button 
+                    onClick={generateRecommendation}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Try Again
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : recommendation ? (
               <>
                 <Card className="border-primary/20 bg-primary/5 shadow-lg">
                   <CardHeader>
