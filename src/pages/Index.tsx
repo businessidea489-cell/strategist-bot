@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lightbulb, TrendingUp, Zap } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [businessContext, setBusinessContext] = useState("");
@@ -16,18 +17,65 @@ const Index = () => {
     bpa: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const generateRecommendation = () => {
+  useEffect(() => {
+    // Load n8n chat widget
+    const link = document.createElement('link');
+    link.href = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.textContent = `
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+      createChat({
+        webhookUrl: 'https://dsm-n8n-642200156.kloudbeansite.com/webhook/3cdc60ec-1df3-4aa3-aca8-6dddea2ac534/chat'
+      });
+    `;
+    document.body.appendChild(script);
+
+    return () => {
+      document.head.removeChild(link);
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const generateRecommendation = async () => {
     setLoading(true);
     
-    // Simulate processing time
-    setTimeout(() => {
-      setRecommendation({
-        strategic: `Expand into predictive analytics for demand forecasting. Enable clients to anticipate stock needs 30-60 days ahead using AI-powered trend analysis. This differentiates Synkron from basic sync tools and justifies premium pricing while reducing client stockouts by 40%.`,
-        bpa: `Automate customer onboarding with intelligent integration wizards. Implement: 1) Auto-detect marketplace APIs and pre-configure sync rules, 2) Self-service setup workflows with guided steps, 3) Automated health checks post-integration. Expected impact: 70% reduction in setup time, 50% decrease in support tickets.`
+    try {
+      const response = await fetch('https://dsm-n8n-642200156.kloudbeansite.com/webhook/3cdc60ec-1df3-4aa3-aca8-6dddea2ac534/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          industry,
+          companySize,
+          businessContext,
+          problem
+        }),
       });
+
+      if (!response.ok) throw new Error('Failed to get recommendations');
+
+      const data = await response.json();
+      setRecommendation({
+        strategic: data.strategic || 'Unable to generate strategic recommendation at this time.',
+        bpa: data.bpa || 'Unable to generate BPA recommendation at this time.'
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate recommendations. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Error generating recommendations:', error);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
