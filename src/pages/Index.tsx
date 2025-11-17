@@ -8,6 +8,7 @@ import { Lightbulb, TrendingUp, Zap, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const [businessContext, setBusinessContext] = useState("");
@@ -120,14 +121,17 @@ const Index = () => {
       {/* Hero Section */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-              <TrendingUp className="h-6 w-6 text-primary-foreground" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
+                <TrendingUp className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Synkrone.in</h1>
+                <p className="text-sm text-muted-foreground">Strategic Consulting & BPA for SMEs</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Synkrone.in</h1>
-              <p className="text-sm text-muted-foreground">Strategic Consulting & BPA for SMEs</p>
-            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
