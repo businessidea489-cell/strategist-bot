@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lightbulb, TrendingUp, Zap, AlertCircle } from "lucide-react";
+import { Lightbulb, TrendingUp, Zap, AlertCircle, Settings as SettingsIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -131,7 +132,14 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Strategic Consulting & BPA for SMEs</p>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+                <Link to="/settings">
+                  <SettingsIcon className="h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
